@@ -1,7 +1,7 @@
 from .blockcipher import *
 from .rijndael import rijndael
 
-def new(key,mode=MODE_ECB,IV=None,counter=None,segment_size=None):
+def new(key,mode=MODE_ECB,IV=None,counter=None,segment_size=None, blocksize=16):
     """Create a new cipher object
 
     Wrapper for pure python implementation rijndael.py
@@ -278,15 +278,15 @@ def new(key,mode=MODE_ECB,IV=None,counter=None,segment_size=None):
     >>> codecs.encode(cipher.encrypt(plaintext), 'hex')[:16]
     b'dfa66747de9ae630'
     """
-    return python_AES(key,mode,IV,counter,segment_size)
+    return python_AES(key,mode,IV,counter,segment_size, blocksize)
 
 class python_AES(BlockCipher):
     key_error_message = ("Key should be 128, 192 or 256 bits")
 
-    def __init__(self,key,mode,IV,counter,segment_size):
+    def __init__(self,key,mode,IV,counter,segment_size, blocksize):
         cipher_module = rijndael
-        args = {'block_size':16}
-        self.blocksize = 16
+        args = {'block_size':blocksize}
+        self.blocksize = blocksize
         BlockCipher.__init__(self,key,mode,IV,counter,cipher_module,segment_size,args)
 
     def keylen_valid(self,key):
